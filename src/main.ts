@@ -87,6 +87,7 @@ app.use(PrimeVue, { theme: { preset: SakaiSky, options: { darkModeSelector: '.ap
 app.use(ConfirmationService)
 
 const auth = useAuthStore()
-waitForSw().then(() => auth.init()).finally(() => {
+waitForSw() // register SW in background - don't block app mount
+auth.init().finally(() => {
   app.mount('#app')
 })
