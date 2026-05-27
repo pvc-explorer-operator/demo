@@ -124,14 +124,20 @@ async function handleRequest(req: Request): Promise<Response | null> {
   return null
 }
 
-const CACHE_NAME = 'pvc-explorer-shell-v1'
+const CACHE_NAME = 'pvc-explorer-shell-v2'
 const SHELL_URL = '/'
 
 self.addEventListener('install', (ev: any) => {
   ev.waitUntil(caches.open(CACHE_NAME).then(c => c.add(SHELL_URL)))
   ;(self as any).skipWaiting()
 })
-self.addEventListener('activate', (ev: any) => ev.waitUntil((self as any).clients.claim()))
+self.addEventListener('activate', (ev: any) => {
+  ev.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => (self as any).clients.claim())
+  )
+})
 self.addEventListener('fetch', (ev: any) => {
   const url = new URL(ev.request.url)
   if (ev.request.mode === 'navigate' && url.origin === self.location.origin) {
