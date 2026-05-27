@@ -7,6 +7,7 @@ import { useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts'
 import KeyboardShortcutsModal from '@/components/shared/KeyboardShortcutsModal.vue'
 import SearchDialog from '@/components/shared/SearchDialog.vue'
 import OnboardingTour from '@/components/shared/OnboardingTour.vue'
+import DemoBanner from '@/components/DemoBanner.vue'
 
 const { layoutConfig, layoutState, hideMobileMenu } = useLayout()
 useKeyboardShortcuts()
@@ -46,4 +47,5 @@ const containerClass = computed(() => ({
   <KeyboardShortcutsModal @request-tour="startTour" />
   <SearchDialog />
   <OnboardingTour ref="tourRef" />
+  <DemoBanner />
 </template>

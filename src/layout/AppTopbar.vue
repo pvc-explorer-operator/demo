@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useLayout } from '@/layout/composables/layout'
 import { useExplorerStore } from '@/stores/explorerStore'
 import { shortcutsModalOpen } from '@/composables/useShortcutsModal'
+import { showDemoBanner } from '@/composables/useDemoBanner'
 
 const { toggleMenu, toggleDarkMode, isDarkTheme } = useLayout()
 const explorerStore = useExplorerStore()
@@ -133,6 +134,9 @@ onUnmounted(() => {
       </button>
       <button type="button" class="layout-topbar-action" @click="startTour" title="Start welcome tour" aria-label="Start welcome tour">
         <i class="pi pi-info-circle" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="layout-topbar-action" @click="showDemoBanner" title="Replay UX Guide" aria-label="Replay UX Guide">
+        <i class="pi pi-compass" aria-hidden="true"></i>
       </button>
       <button type="button" class="layout-topbar-action" @click="shortcutsModalOpen = !shortcutsModalOpen" title="Keyboard shortcuts" aria-label="Toggle keyboard shortcuts">
         <i class="pi pi-question-circle" aria-hidden="true"></i>

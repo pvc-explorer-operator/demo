@@ -1,8 +1,11 @@
 <template>
-  <a
+  <div
     :class="['app-card', { 'card-in-use': !!explorer.consumerCount }]"
-    :href="`/explorers/${explorer.namespace}/${explorer.name}`"
-    @click.prevent="goToDetails"
+    role="link"
+    tabindex="0"
+    @click="goToDetails"
+    @keydown.enter="goToDetails"
+    @keydown.space.prevent="goToDetails"
   >
     <!-- Header -->
     <div class="flex justify-between items-center mb-4">
@@ -93,7 +96,7 @@
         icon="pi pi-folder-open"
         severity="success"
         size="small"
-        @click.stop="goToFiles"
+        @click="goToFiles"
       />
       <Button
         v-if="explorer.phase === 'Running'"
@@ -102,7 +105,7 @@
         severity="warn"
         size="small"
         :loading="disconnecting"
-        @click.stop="doDisconnect"
+        @click="doDisconnect"
       />
       <Button
         v-else-if="explorer.phase === 'ScaledToZero'"
@@ -110,7 +113,7 @@
         icon="pi pi-power-off"
         size="small"
         :loading="connecting"
-        @click.stop="doConnect"
+        @click="doConnect"
       />
       <Button
         v-else-if="explorer.phase === 'Waking'"
@@ -126,7 +129,7 @@
         icon="pi pi-info-circle"
         severity="secondary"
         size="small"
-        @click.stop="goToDetails"
+        @click="goToDetails"
       />
       <Button
         icon="pi pi-ellipsis-v"
@@ -134,16 +137,17 @@
         text
         size="small"
         class="ml-auto"
-        @click.stop="goToDetails"
+        @click="goToDetails"
         :title="'View details'"
       />
     </div>
-  </a>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Button from 'primevue/button'
@@ -155,6 +159,7 @@ import { useExplorerStore } from '../../stores/explorerStore'
 const props = defineProps<{ explorer: Explorer }>()
 const router = useRouter()
 const explorerStore = useExplorerStore()
+const toast = useToast()
 
 const connecting = ref(false)
 const disconnecting = ref(false)
@@ -194,29 +199,21 @@ async function pollPhase(target: string, timeout = 60000): Promise<void> {
 }
 
 async function doConnect() {
-  connecting.value = true
-  try {
-    await explorerStore.wakeExplorer(props.explorer.namespace, props.explorer.name)
-    await pollPhase('Running')
-  } catch {
-    // fetchExplorer + upsertExplorer already updated the store
-    // if polling timed out, still show current phase (Waking or whatever)
-  }
-  connecting.value = false
+  toast.add({
+    severity: 'info',
+    summary: 'Demo mode',
+    detail: 'Connect is not available in this static demo. Run the UI locally (cd ui && npm run dev) or deploy a Kind cluster to try live actions.',
+    life: 7000,
+  })
 }
 
 async function doDisconnect() {
-  disconnecting.value = true
-  try {
-    await explorerStore.sleepExplorer(props.explorer.namespace, props.explorer.name)
-    await explorerStore.fetchExplorer(props.explorer.namespace, props.explorer.name)
-    if (props.explorer.phase !== 'ScaledToZero') {
-      await pollPhase('ScaledToZero')
-    }
-  } catch {
-    await explorerStore.fetchExplorer(props.explorer.namespace, props.explorer.name).catch(() => {})
-  }
-  disconnecting.value = false
+  toast.add({
+    severity: 'info',
+    summary: 'Demo mode',
+    detail: 'Disconnect is not available in this static demo. Run the UI locally or deploy a Kind cluster to try live actions.',
+    life: 7000,
+  })
 }
 
 function phaseSeverity(phase: string) {

@@ -65,11 +65,13 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Skeleton from 'primevue/skeleton'
+import { useToast } from 'primevue/usetoast'
 import { useExplorerDetailShortcuts } from '../composables/useExplorerDetailShortcuts'
 
 const route = useRoute()
 const router = useRouter()
 const store = useExplorerStore()
+const toast = useToast()
 const explorer = ref<Explorer | null>(null)
 const loading = ref(true)
 const showWakeDialog = ref(false)
@@ -107,7 +109,12 @@ function goToFiles() {
 }
 
 function wake() {
-  showWakeDialog.value = true
+  toast.add({
+    severity: 'info',
+    summary: 'Demo mode',
+    detail: 'Connect / Wake is not available in this static demo. Run the UI locally (cd ui && npm run dev) or deploy a Kind cluster to try live actions.',
+    life: 7000,
+  })
 }
 
 function onWakeDialogClose() {
@@ -116,15 +123,12 @@ function onWakeDialogClose() {
 }
 
 async function doDisconnect() {
-  if (!explorer.value) return
-  disconnecting.value = true
-  try {
-    await store.sleepExplorer(explorer.value.namespace, explorer.value.name)
-    await pollPhase('ScaledToZero')
-  } catch {
-    // fetchExplorer already updated the store
-  }
-  disconnecting.value = false
+  toast.add({
+    severity: 'info',
+    summary: 'Demo mode',
+    detail: 'Disconnect is not available in this static demo. Run the UI locally or deploy a Kind cluster to try live actions.',
+    life: 7000,
+  })
 }
 
 async function pollPhase(target: string, timeout = 60000): Promise<void> {
