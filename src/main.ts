@@ -65,17 +65,10 @@ import { useAuthStore } from './stores/authStore'
 
 declare const __DEMO_MODE__: string | undefined
 
-async function waitForSw(): Promise<void> {
-  if (typeof __DEMO_MODE__ === 'undefined' || !('serviceWorker' in navigator)) return
-  const base = import.meta.env.BASE_URL
-  await navigator.serviceWorker.register(`${base}sw.js`, { scope: base })
-  if (!navigator.serviceWorker.controller) {
-    await new Promise<void>(resolve => {
-      navigator.serviceWorker.addEventListener('controllerchange', () => resolve(), { once: true })
-      // Safety timeout: if SW doesn't take control within 10s, proceed anyway
-      setTimeout(resolve, 10000)
-    })
-  }
+// Install mock API interceptor before anything else — no SW dependency
+if (typeof __DEMO_MODE__ !== 'undefined') {
+  const { installFetchInterceptor } = await import('../demo-mock/fetchInterceptor')
+  installFetchInterceptor()
 }
 
 loadTheme()
@@ -88,6 +81,11 @@ app.use(PrimeVue, { theme: { preset: SakaiSky, options: { darkModeSelector: '.ap
 app.use(ConfirmationService)
 
 const auth = useAuthStore()
-waitForSw().then(() => auth.init()).finally(() => {
+auth.init().finally(() => {
   app.mount('#app')
 })
+
+// Register SW in background for navigation fallback only — no longer needed for API mocking
+if (typeof __DEMO_MODE__ !== 'undefined' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`, { scope: import.meta.env.BASE_URL })
+}
