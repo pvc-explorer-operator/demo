@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { demoBannerVisible, registerPendingTourStart } from '@/composables/useDemoBanner'
+import { showDemoBanner } from '@/composables/useDemoBanner'
 
 interface TourStep {
   target: string
@@ -34,6 +34,12 @@ const steps: TourStep[] = [
     target: '.layout-topbar',
     title: 'Topbar Controls',
     description: 'Manage auto-refresh, toggle dark mode, and access keyboard shortcuts from here.',
+    placement: 'bottom',
+  },
+  {
+    target: '.layout-topbar',
+    title: 'Need a reminder?',
+    description: 'Click the ℹ️ button in the topbar anytime to replay this guide, or the 🧭 button to re-read the demo introduction.',
     placement: 'bottom',
   },
 ]
@@ -147,10 +153,12 @@ function prev() {
 function finish() {
   active.value = false
   localStorage.setItem(STORAGE_KEY, '1')
+  setTimeout(showDemoBanner, 400)
 }
 
 function skip() {
-  finish()
+  active.value = false
+  localStorage.setItem(STORAGE_KEY, '1')
 }
 
 function start() {
@@ -179,15 +187,10 @@ defineExpose({ start })
 onMounted(() => {
   const seen = localStorage.getItem(STORAGE_KEY)
   if (!seen) {
-    const doStart = () => {
+    setTimeout(() => {
       scrollTargetIntoView(steps[0].target)
       setTimeout(() => { start() }, 400)
-    }
-    if (demoBannerVisible.value) {
-      registerPendingTourStart(doStart)
-    } else {
-      setTimeout(doStart, 600)
-    }
+    }, 600)
   }
   window.addEventListener('resize', onResize)
   window.addEventListener('keydown', onKeydown)
