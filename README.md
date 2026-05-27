@@ -1,15 +1,27 @@
-# PVC Explorer — Live Demo
+# PVC Explorer Demo
 
-Interactive demo of the [PVC Explorer](https://github.com/pvc-explorer-operator/pvc-explorer) UI, served as a fully static site with no backend required.
+Self-contained demo build of the PVC Explorer UI, deployed to GitHub Pages.
 
-**[Open the demo →](https://pvc-explorer-operator.github.io/demo/)**
+Built output goes to `dist/`. The GitHub Actions workflow builds and deploys it.
 
-## How it works
+## Build locally
 
-All API calls are intercepted by a Service Worker that serves mock data. The WebSocket feed is simulated via a composable alias. No Kubernetes cluster or server is involved.
+```bash
+npm install
+npm run build
+```
 
-Mock data includes 18 explorers across multiple phases (Running, ScaledToZero, Waking, Pending, Failed) and 4 scopes.
+The built files land in `dist/`. GitHub Pages is configured to serve from the `dist/` folder (via GitHub Actions deployment).
 
-## Source
+## Updating
 
-The demo is built from the `ui/` directory in the main repository using `npm run build:demo`. This repo is updated automatically on every push to `main`.
+When the main project's UI changes, sync the source files and rebuild:
+
+```bash
+# From this repo root:
+rsync -a --exclude=node_modules --exclude=dist --exclude=.git ../pvc-explorer/ui/ .
+npm install
+npm run build
+```
+
+Or just push to `main` and the GitHub Actions workflow handles everything.
