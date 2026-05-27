@@ -268,7 +268,15 @@ async function d(e) {
 	}
 	return n === "/api/v1/explorers" && o === "GET" ? l(i) : null;
 }
-self.addEventListener("install", () => self.skipWaiting()), self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim())), self.addEventListener("fetch", (e) => {
-	new URL(e.request.url).pathname.startsWith("/api/") && e.respondWith(d(e.request).then((t) => t ?? fetch(e.request)));
+var f = "pvc-explorer-shell-v1", p = "/";
+self.addEventListener("install", (e) => {
+	e.waitUntil(caches.open(f).then((e) => e.add(p))), self.skipWaiting();
+}), self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim())), self.addEventListener("fetch", (e) => {
+	let t = new URL(e.request.url);
+	if (e.request.mode === "navigate" && t.origin === self.location.origin) {
+		e.respondWith(caches.match(p).then((t) => t ?? fetch(e.request)));
+		return;
+	}
+	t.pathname.startsWith("/api/") && e.respondWith(d(e.request).then((t) => t ?? fetch(e.request)));
 });
 //#endregion
