@@ -147,7 +147,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Button from 'primevue/button'
@@ -159,7 +158,6 @@ import { useExplorerStore } from '../../stores/explorerStore'
 const props = defineProps<{ explorer: Explorer }>()
 const router = useRouter()
 const explorerStore = useExplorerStore()
-const toast = useToast()
 
 const connecting = ref(false)
 const disconnecting = ref(false)
@@ -199,7 +197,8 @@ async function pollPhase(target: string, timeout = 60000): Promise<void> {
 }
 
 async function doConnect() {
-  toast.add({
+  const { useToast } = await import('primevue/usetoast')
+  useToast().add({
     severity: 'info',
     summary: 'Demo mode',
     detail: 'Connect is not available in this static demo. Run the UI locally (cd ui && npm run dev) or deploy a Kind cluster to try live actions.',
@@ -208,7 +207,8 @@ async function doConnect() {
 }
 
 async function doDisconnect() {
-  toast.add({
+  const { useToast } = await import('primevue/usetoast')
+  useToast().add({
     severity: 'info',
     summary: 'Demo mode',
     detail: 'Disconnect is not available in this static demo. Run the UI locally or deploy a Kind cluster to try live actions.',

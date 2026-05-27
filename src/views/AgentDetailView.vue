@@ -65,13 +65,11 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import Chip from 'primevue/chip'
 import Skeleton from 'primevue/skeleton'
-import { useToast } from 'primevue/usetoast'
 import { useExplorerDetailShortcuts } from '../composables/useExplorerDetailShortcuts'
 
 const route = useRoute()
 const router = useRouter()
 const store = useExplorerStore()
-const toast = useToast()
 const explorer = ref<Explorer | null>(null)
 const loading = ref(true)
 const showWakeDialog = ref(false)
@@ -109,11 +107,13 @@ function goToFiles() {
 }
 
 function wake() {
-  toast.add({
-    severity: 'info',
-    summary: 'Demo mode',
-    detail: 'Connect / Wake is not available in this static demo. Run the UI locally (cd ui && npm run dev) or deploy a Kind cluster to try live actions.',
-    life: 7000,
+  import('primevue/usetoast').then(({ useToast }) => {
+    useToast().add({
+      severity: 'info',
+      summary: 'Demo mode',
+      detail: 'Connect / Wake is not available in this static demo. Run the UI locally (cd ui && npm run dev) or deploy a Kind cluster to try live actions.',
+      life: 7000,
+    })
   })
 }
 
@@ -123,7 +123,8 @@ function onWakeDialogClose() {
 }
 
 async function doDisconnect() {
-  toast.add({
+  const { useToast } = await import('primevue/usetoast')
+  useToast().add({
     severity: 'info',
     summary: 'Demo mode',
     detail: 'Disconnect is not available in this static demo. Run the UI locally or deploy a Kind cluster to try live actions.',
