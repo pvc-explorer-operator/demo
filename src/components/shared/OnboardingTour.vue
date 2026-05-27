@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { demoBannerVisible, registerPendingTourStart } from '@/composables/useDemoBanner'
 
 interface TourStep {
   target: string
@@ -178,11 +179,15 @@ defineExpose({ start })
 onMounted(() => {
   const seen = localStorage.getItem(STORAGE_KEY)
   if (!seen) {
-    // Small delay to allow the view to render
-    setTimeout(() => {
+    const doStart = () => {
       scrollTargetIntoView(steps[0].target)
       setTimeout(() => { start() }, 400)
-    }, 600)
+    }
+    if (demoBannerVisible.value) {
+      registerPendingTourStart(doStart)
+    } else {
+      setTimeout(doStart, 600)
+    }
   }
   window.addEventListener('resize', onResize)
   window.addEventListener('keydown', onKeydown)

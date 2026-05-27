@@ -43,13 +43,15 @@ import Button from 'primevue/button'
 import { demoBannerVisible, initDemoBanner, dismissDemoBanner } from '@/composables/useDemoBanner'
 
 const dontShow = ref(false)
+const isFirstVisit = ref(false)
 
 onMounted(() => {
+  isFirstVisit.value = !localStorage.getItem('pvc-explorer-demo-banner-dismissed')
   initDemoBanner()
 })
 
 function close() {
-  dismissDemoBanner(dontShow.value)
+  dismissDemoBanner(dontShow.value, isFirstVisit.value)
 }
 </script>
 
