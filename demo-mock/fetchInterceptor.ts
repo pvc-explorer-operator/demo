@@ -55,6 +55,9 @@ function handleRequest(method: string, path: string, url: URL, body?: string): R
   if (path === '/api/v1/namespaces' && method === 'GET') {
     return json([...new Set(mockExplorers.map(e => (e.metadata as any).namespace))])
   }
+  if (path === '/api/v1/theme' && method === 'GET') {
+    return json({ appName: 'PVC Explorer' })
+  }
   const nsMatch = path.match(/^\/api\/v1\/namespaces\/([^/]+)\/pvcs$/)
   if (nsMatch && method === 'GET') {
     const ns = decodeURIComponent(nsMatch[1])
