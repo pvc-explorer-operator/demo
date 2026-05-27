@@ -1,27 +1,26 @@
-# PVC Explorer Demo
 
-Self-contained demo build of the PVC Explorer UI, deployed to GitHub Pages.
+# PVC Explorer Mockup Demo
 
-Built output goes to `dist/`. The GitHub Actions workflow builds and deploys it.
+This project is a **standalone mockup demo** of the PVC Explorer UI.
 
-## Build locally
+**No real Kubernetes cluster is connected.** All data, files, and actions are simulated using static mock data. The UI is fully interactive, but all operations are read-only and reset on page reload.
+
+## Features
+
+- Browse a simulated file system and PVC explorer interface
+- All actions (connect, disconnect, wake, etc.) are disabled or show info messages
+- Mock data is provided via the `demo-mock/` and `dev-mock/` folders
+- Built with Vue 3, PrimeVue, Pinia, and Vite
+
+## Running the Demo
 
 ```bash
 npm install
-npm run build
+npm run dev
 ```
 
-The built files land in `dist/`. GitHub Pages is configured to serve from the `dist/` folder (via GitHub Actions deployment).
+Open [http://localhost:5173](http://localhost:5173) to view the demo in your browser.
 
-## Updating
+## About
 
-When the main project's UI changes, sync the source files and rebuild:
-
-```bash
-# From this repo root:
-rsync -a --exclude=node_modules --exclude=dist --exclude=.git ../pvc-explorer/ui/ .
-npm install
-npm run build
-```
-
-Or just push to `main` and the GitHub Actions workflow handles everything.
+This demo is for UI/UX preview and testing only. For the full live experience, see the [main PVC Explorer repository](https://github.com/pvc-explorer-operator/pvc-explorer).
