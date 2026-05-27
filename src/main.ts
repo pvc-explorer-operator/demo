@@ -69,10 +69,11 @@ async function waitForSw(): Promise<void> {
   if (typeof __DEMO_MODE__ === 'undefined' || !('serviceWorker' in navigator)) return
   const base = import.meta.env.BASE_URL
   await navigator.serviceWorker.register(`${base}sw.js`, { scope: base })
-  await navigator.serviceWorker.ready
   if (!navigator.serviceWorker.controller) {
     await new Promise<void>(resolve => {
       navigator.serviceWorker.addEventListener('controllerchange', () => resolve(), { once: true })
+      // Safety timeout: if SW doesn't take control within 10s, proceed anyway
+      setTimeout(resolve, 10000)
     })
   }
 }
@@ -87,7 +88,6 @@ app.use(PrimeVue, { theme: { preset: SakaiSky, options: { darkModeSelector: '.ap
 app.use(ConfirmationService)
 
 const auth = useAuthStore()
-waitForSw() // register SW in background - don't block app mount
-auth.init().finally(() => {
+waitForSw().then(() => auth.init()).finally(() => {
   app.mount('#app')
 })
