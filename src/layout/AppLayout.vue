@@ -39,6 +39,10 @@ const containerClass = computed(() => ({
       </div>
       <div class="layout-footer">
         <span>pvc-explorer</span>
+        <span class="footer-sep">|</span>
+        <a href="https://github.com/pvc-explorer-operator/pvc-explorer" target="_blank" rel="noopener">GitHub</a>
+        <span class="footer-sep">|</span>
+        <a href="https://github.com/pvc-explorer-operator/pvc-explorer/blob/main/LICENSE" target="_blank" rel="noopener">Apache 2.0 License</a>
       </div>
     </div>
     <div class="layout-mask animate-fadein" @click="hideMobileMenu" />
